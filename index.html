@@ -77,15 +77,16 @@ button:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid 
 </main>
 
 <script>
-const EL={pyro:['炎','#e8683c'],hydro:['水','#3d9be9'],anemo:['風','#4fd1b0'],electro:['雷','#a66be0'],dendro:['草','#8cc63f'],cryo:['氷','#7fd3e8'],geo:['岩','#e0b03c']};
+const EL={pyro:['炎','#e8683c'],hydro:['水','#3d9be9'],anemo:['風','#4fd1b0'],electro:['雷','#a66be0'],dendro:['草','#8cc63f'],cryo:['氷','#7fd3e8'],geo:['岩','#e0b03c'],all:['全','#c9ccd8']};
 const BASE={
-pyro:'アンバー 香菱 ベネット クレー ディルック 煙緋 宵宮 胡桃 辛炎 トーマ ディシア リネ アルレッキーノ シュヴルーズ マーヴィカ ガイミン',
-hydro:'バーバラ モナ タルタリヤ 行秋 夜蘭 神里綾人 珊瑚宮心海 ヌヴィレット フリーナ ニィロウ キャンディス ムアラニ シグウィン ダリア',
-anemo:'ジン ウェンティ 楓原万葉 放浪者 鹿野院平蔵 閑雲 魈 早柚 ファルザン リネット チャスカ イファ 藍硯',
-electro:'フィッシュル レザー 北斗 刻晴 雷電将軍 九条裟羅 八重神子 ドリー セノ 久岐忍 リサ クロリンデ オロルン ヴァレサ イアンサ イネファ',
-dendro:'ナヒーダ ティナリ コレイ 白朮 カーヴェ ヨォーヨ アルハイゼン エミリエ 綺良々 キィニチ',
-cryo:'ガイア ディオナ 七七 重雲 神里綾華 甘雨 ロサリア エウルア 申鶴 アーロイ レイラ ミカ フレミネ リオセスリ シャルロット エスコフィエ シトラリ スカーク',
-geo:'ノエル 鍾離 凝光 アルベド ゴロー 荒瀧一斗 雲菫 ナヴィア 千織 シロネン'
+pyro:'アンバー ベネット クレー ディルック 香菱 辛炎 胡桃 煙緋 宵宮 トーマ ディシア リネ アルレッキーノ シュヴルーズ 嘉明 マーヴィカ ニコ ドゥリン',
+hydro:'バーバラ モナ 行秋 タルタリヤ 珊瑚宮心海 神里綾人 夜蘭 ニィロウ キャンディス シグウィン ヌヴィレット フリーナ ムアラニ ダリア アイノ コロンビーナ ヴォジャニーツァ',
+anemo:'ジン ウェンティ スクロース 魈 楓原万葉 早柚 鹿野院平蔵 放浪者 ファルザン リネット 閑雲 チャスカ イファ 藍硯 夢見月瑞希 ファルカ ヤフォダ ヴェスナ',
+electro:'リサ レザー フィッシュル 北斗 刻晴 雷電将軍 八重神子 九条裟羅 久岐忍 ドリー セノ クロリンデ セトス イアンサ オロルン ヴァレサ イネファ フリンズ アリョーシャ',
+dendro:'白朮 ティナリ コレイ アルハイゼン ナヒーダ カーヴェ ヨォーヨ 綺良々 エミリエ キィニチ ラウマ ネフェル',
+cryo:'ガイア 重雲 七七 神里綾華 ディオナ 甘雨 ロサリア エウルア アーロイ 申鶴 ミカ レイラ フレミネ シャルロット リオセスリ スカーク シトラリ エスコフィエ サンドローネ ローエン オデット',
+geo:'ノエル 凝光 アルベド 鍾離 ゴロー 荒瀧一斗 雲菫 ナヴィア 千織 カチーナ シロネン 茲白 リンネア',
+all:'主人公 ドール'
 };
 const KEY='gtl.v1';
 let S={custom:[],off:[],size:4,uniq:false};
@@ -112,17 +113,17 @@ function compute(){
   const pool=all().filter(c=>!S.off.includes(c.n));
   const keep=team.slice(0,S.size).map(m=>m&&m.locked?m:null);
   const used=new Set(keep.filter(Boolean).map(m=>m.n));
-  const usedEl=new Set(keep.filter(Boolean).map(m=>m.e));
+  const usedEl=new Set(keep.filter(m=>m&&m.e!=='all').map(m=>m.e));
   let cand=pool.filter(c=>!used.has(c.n));
   const out=[];
   for(let i=0;i<S.size;i++){
     if(keep[i]){out.push(keep[i]);continue}
-    if(S.uniq)cand=cand.filter(c=>!usedEl.has(c.e));
+    if(S.uniq)cand=cand.filter(c=>c.e==='all'||!usedEl.has(c.e));
     if(!cand.length){out.push(null);continue}
     const c=pick(cand);
     out.push({n:c.n,e:c.e,locked:false});
     cand=cand.filter(x=>x.n!==c.n);
-    usedEl.add(c.e);
+    if(c.e!=='all')usedEl.add(c.e);
   }
   return out;
 }
